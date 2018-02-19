@@ -1,13 +1,25 @@
 #!/bin/bash
 
+set -x
+
 INSTALL_BASE=/home/pi/
 CODE_BASE=`pwd`
 VIRTUALENV='/usr/bin/python /usr/lib/python2.7/dist-packages/virtualenv.py'
-
+OUTPUT_FILE='setup.log'
+SCRIPT_VERSION=0.0.1
+SCRIPT_NAME='SetupOrangeOctoPrint'
 if [[ $UID -ne 0 ]]; then
   sudo -p 'Restarting as root, password: ' bash $0 "$@"
   exit $?
 fi
+
+function usage() {
+  echo "$SCRIPT_NAME v$SCRIPT_VERSION"
+  echo "$0"
+  echo " --help (This)"
+  echo " --restart-everything (Nuke Everything)"
+  exit 0
+}
 
 function echo_green(){
   echo -e "\e[92m$1\e[0m"
@@ -23,47 +35,47 @@ function setup_user_pi() {
 
 function apt_steps() {
   echo_green "Removing Extras"
-  apt-get remove -qq -y --purge scratch squeak-plugins-scratch squeak-vm \
+  apt-get remove -y --purge scratch squeak-plugins-scratch squeak-vm \
    wolfram-engine python-minecraftpi minecraft-pi sonic-pi oracle-java8-jdk \
    bluej libreoffice-common libreoffice-core freepats greenfoot \
-   nodered &> /dev/null
+   nodered &> $OUTPUT_FILE
 
   echo_green "--Adding support software for Octoprint"
-  apt-get -qq -y --force-yes install python2.7 python-virtualenv python-dev \
+  apt-get -y --force-yes install python2.7 python-virtualenv python-dev \
     git screen subversion cmake checkinstall avahi-daemon \
     libavahi-compat-libdnssd1 libffi-dev libssl-dev libjpeg62-turbo-dev \
-    ssl-cert haproxy &> /dev/null
-  apt-get -qq install --reinstall iputils-ping &> /dev/null
+    ssl-cert haproxy &> $OUTPUT_FILE
+  apt-get install --reinstall iputils-ping &> $OUTPUT_FILE
   apt-get -qq -y --force-yes --no-install-recommends install imagemagick \
-    libav-tools libv4l-dev &> /dev/null
+    libav-tools libv4l-dev &> $OUTPUT_FILE
 
   echo_green "--Updating Cache"
-  apt-get update -qq -y &> /dev/null
+  apt-get update -qq -y &> $OUTPUT_FILE
   echo_green "--Updating Software"
-  apt-get -qq -y upgrade &> /dev/null
+  apt-get -qq -y upgrade &> $OUTPUT_FILE
 }
 
 function cleanup() {
   echo_green "Cleaning up Space"
-  apt-get -y clean &> /dev/null
+  apt-get -y clean &> $OUTPUT_FILE
   echo_green "--Removing no longer needed packages"
-  apt-get -y autoremove &> /dev/null
+  apt-get -y autoremove &> $OUTPUT_FILE
 }
 
 function setup_venv() {
   echo_green "Setting up virtualenv and pip"
   cd $INSTALL_BASE
-  sudo -u pi $VIRTUALENV oprint &> /dev/null
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install --upgrade pip &> /dev/null
+  sudo -u pi $VIRTUALENV oprint &> $OUTPUT_FILE
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install --upgrade pip &> $OUTPUT_FILE
 }
 
 function setup_octoprint() {
   echo_green "Downloading Octoprint"
   cd $INSTALL_BASE
-  git clone https://github.com/foosel/OctoPrint.git OctoPrint &> /dev/null
+  git clone https://github.com/foosel/OctoPrint.git OctoPrint &> $OUTPUT_FILE
   cd OctoPrint
   echo_green "--Building Octoprint"
-  sudo -u pi /home/pi/oprint/bin/python setup.py install &> /dev/null
+  sudo -u pi $INSTALL_BASE/oprint/bin/python setup.py install &> $OUTPUT_FILE
   echo_green "--Setting up Octoprint in Environment"
   cd ..
   cp $CODE_BASE/files/etc_initd_octoprint /etc/init.d/octoprint
@@ -89,13 +101,21 @@ function setup_octoprint_plugins() {
 function setup_mjpg_streamer() {
   echo_green "Setting up mjpg_streamer"
   cd $INSTALL_BASE
-  git clone https://github.com/jacksonliam/mjpg-streamer.git mjpg-streamer > /dev/null
+  git clone https://github.com/jacksonliam/mjpg-streamer.git mjpg-streamer > $OUTPUT_FILE
   cd mjpg-streamer
   echo_green "--Building binaries"
-  sudo -u pi make > /dev/null
+  sudo -u pi make > $OUTPUT_FILE
   mkdir www-octopi
   echo_green "--Building webpages"
-  rm /etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/certs/ssl-cert-snakeoil.pem
+  if [ -e "/etc/ssl/private/ssl-cert-snakeoil.key"]
+  then
+    rm /etc/ssl/private/ssl-cert-snakeoil.key
+  fi
+  if [ -e "/etc/ssl/certs/ssl-cert-snakeoil.pem" ]
+  then
+    rm /etc/ssl/certs/ssl-cert-snakeoil.pem
+  fi
+
   cp $CODE_BASE/files/mjpg_www_index /home/pi/mjpg-streamer/www-octopi/index.html
   cp $CODE_BASE/files/etc_default_webcamd /etc/init.d/webcamd
   chmod +x /etc/init.d/webcamd
@@ -113,19 +133,31 @@ do
     case "$1" in
         --debugging) DEBUGGING=true
             ;;
-        --restart-everything) NUKE_THE_WORLD=true
+        --restart-everything) NUKE_THE_WORLD="true"
+            ;;
+        --help) DO_HELP="true"
             ;;
     esac
     shift
 done
 
-if [ NUKE_THE_WORLD ]
+if [ -n "$DO_HELP" ]
 then
-  echo "NUKE_THE_WORLD"
+  usage
+fi
+
+if [ -n "$NUKE_THE_WORLD" ]
+then
+  echo "Nuking everything..."
   sudo rm -rf $INSTALL_BASE/oprint
   sudo rm -rf $INSTALL_BASE/mjpg_streamer
   sudo rm -rf $INSTALL_BASE/OctoPrint
   exit 0
+fi
+
+if [ -n "$DEBUGGING" ]
+then
+  OUTPUT_FILE=/dev/null
 fi
 
 clear
@@ -142,3 +174,4 @@ setup_octoprint_plugins
 setup_mjpg_streamer
 setup_haproxy
 cleanup
+
