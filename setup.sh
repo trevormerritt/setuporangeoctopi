@@ -120,7 +120,8 @@ function setup_mjpg_streamer() {
   fi
 
   cp $CODE_BASE/files/mjpg_www_index /home/pi/mjpg-streamer/www-octopi/index.html
-  cp $CODE_BASE/files/etc_default_webcamd /etc/init.d/webcamd
+  cp $CODE_BASE/files/etc_initd_webcamd /etc/init.d/webcamd
+  cp $CODE_BASE/files/etc_default_webcamd /etc/default/webcamd
   chmod +x /etc/init.d/webcamd
   update-rc.d webcamd defaults
 }
