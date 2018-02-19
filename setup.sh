@@ -35,6 +35,9 @@ function setup_user_pi() {
 }
 
 function apt_steps() {
+  echo_green "--Updating Cache"
+  apt-get update -y &> $OUTPUT_FILE
+
   echo_green "Removing Extras"
   apt-get remove -y --purge scratch squeak-plugins-scratch squeak-vm \
    wolfram-engine python-minecraftpi minecraft-pi sonic-pi oracle-java8-jdk \
@@ -50,8 +53,6 @@ function apt_steps() {
   apt-get -y --force-yes --no-install-recommends install imagemagick \
     libav-tools libv4l-dev &> $OUTPUT_FILE
 
-  echo_green "--Updating Cache"
-  apt-get update -y &> $OUTPUT_FILE
   echo_green "--Updating Software"
   apt-get -y upgrade &> $OUTPUT_FILE
 }
@@ -125,6 +126,7 @@ function setup_mjpg_streamer() {
   cp $CODE_BASE/files/etc_default_webcamd /etc/default/webcamd
   mkdir /root/bin
   cp $CODE_BASE/files/root_bin_webcamd /root/bin/webcamd
+  chmod +x /root/bin/webcamd
   chmod +x /etc/init.d/webcamd
   update-rc.d webcamd defaults
 
@@ -186,6 +188,7 @@ then
   setup_mjpg_streamer
   setup_haproxy
   cleanup
+  shutdown now -r
 else
   usage
 fi
