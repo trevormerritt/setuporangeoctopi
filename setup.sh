@@ -6,6 +6,7 @@ VIRTUALENV='/usr/bin/python /usr/lib/python2.7/dist-packages/virtualenv.py'
 OUTPUT_FILE='setup.log'
 SCRIPT_VERSION=0.0.1
 SCRIPT_NAME='SetupOrangeOctoPrint'
+
 if [[ $UID -ne 0 ]]; then
   sudo -p 'Restarting as root, password: ' bash $0 "$@"
   exit $?
@@ -103,7 +104,7 @@ function setup_mjpg_streamer() {
   cd $INSTALL_BASE
   git clone https://github.com/jacksonliam/mjpg-streamer.git mjpg-streamer > $OUTPUT_FILE
   chown -R pi:po mjpg-streamer
-  cd mjpg-streamer
+  cd mjpg-streamer/mjpg-streamer-experimental
   echo_green "--Building binaries"
   sudo -u pi make > $OUTPUT_FILE
   mkdir www-octopi
