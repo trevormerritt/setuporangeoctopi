@@ -18,6 +18,7 @@ function usage() {
   echo " --help (This)"
   echo " --restart-everything (Nuke Everything)"
   echo " --debugging (Turn on more debugging stuff)"
+  echo " --install (Install the code)"
   exit 0
 }
 
