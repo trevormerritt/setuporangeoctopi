@@ -103,8 +103,9 @@ function setup_mjpg_streamer() {
   echo_green "Setting up mjpg_streamer"
   cd $INSTALL_BASE
   git clone https://github.com/jacksonliam/mjpg-streamer.git mjpg-streamer > $OUTPUT_FILE
-  chown -R pi:po mjpg-streamer
-  cd mjpg-streamer/mjpg-streamer-experimental
+  chown -R pi:pi mjpg-streamer
+  cd mjpg-streamer
+  mv mjpg-streamer-experimental/* .
   echo_green "--Building binaries"
   sudo -u pi make > $OUTPUT_FILE
   mkdir www-octopi
@@ -137,16 +138,13 @@ do
             ;;
         --restart-everything) NUKE_THE_WORLD="true"
             ;;
-        --help) DO_HELP="true"
+        --help) usage
+            ;;
+        --install) DO_INSTALL="true"
             ;;
     esac
     shift
 done
-
-if [ -n "$DO_HELP" ]
-then
-  usage
-fi
 
 if [ -n "$NUKE_THE_WORLD" ]
 then
@@ -166,17 +164,23 @@ then
   OUTPUT_FILE=/dev/null
 fi
 
-clear
-echo_green "Starting to install from $CODE_BASE to $INSTALL_BASE..."
-apt_steps
-echo_green "...Install of packages complete"
-echo_green "Fixing SSH"
-echo "IPQoS 0x00" >> /etc/ssh/sshd_config
+if [ -n "$DO_INSTALL" ]
+then
 
-setup_user_pi
-setup_venv
-setup_octoprint
-setup_octoprint_plugins
-setup_mjpg_streamer
-setup_haproxy
-cleanup
+  clear
+  echo_green "Starting to install from $CODE_BASE to $INSTALL_BASE..."
+  apt_steps
+  echo_green "...Install of packages complete"
+  echo_green "Fixing SSH"
+  echo "IPQoS 0x00" >> /etc/ssh/sshd_config
+
+  setup_user_pi
+  setup_venv
+  setup_octoprint
+  setup_octoprint_plugins
+  setup_mjpg_streamer
+  setup_haproxy
+  cleanup
+else
+  usage
+fi
