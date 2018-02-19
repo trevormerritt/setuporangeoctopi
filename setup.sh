@@ -2,6 +2,7 @@
 
 INSTALL_BASE=/home/pi/
 CODE_BASE=`pwd`
+VIRTUALENV='/usr/bin/python /usr/lib/python2.7/dist-packages/virtualenv.py'
 
 if [[ $UID -ne 0 ]]; then
   sudo -p 'Restarting as root, password: ' bash $0 "$@"
@@ -51,8 +52,9 @@ function cleanup() {
 
 function setup_venv() {
   echo_green "Setting up virtualenv and pip"
-  sudo -u pi virtualenv oprint &> /dev/null
-  sudo -u pi /home/pi/oprint/bin/pip install --upgrade pip &> /dev/null
+  cd $INSTALL_BASE
+  sudo -u pi $VIRTUALENV oprint &> /dev/null
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install --upgrade pip &> /dev/null
 }
 
 function setup_octoprint() {
@@ -71,17 +73,17 @@ function setup_octoprint() {
 }
 
 function setup_octoprint_plugins() {
-  sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-Autoselect/archive/master.zip"
-  sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-DisplayProgress/archive/master.zip"
-  sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/jasiek/OctoPrint-Cost/archive/master.zip"
-  sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/dattas/OctoPrint-DetailedProgress/archive/master.zip"
-  sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/Salandora/OctoPrint-FileManager/archive/master.zip"
-  sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/kantlivelong/OctoPrint-PSUControl/archive/master.zip"
-  sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/malnvenshorn/OctoPrint-CostEstimation/archive/master.zip"
-  sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/google/OctoPrint-HeaterTimeout/archive/master.zip"
-  sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/marian42/octoprint-preheat/archive/master.zip"
-  sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/pablogventura/Octoprint-ETA/archive/master.zip"
-  sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-FirmwareUpdater/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-Autoselect/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-DisplayProgress/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/jasiek/OctoPrint-Cost/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/dattas/OctoPrint-DetailedProgress/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/Salandora/OctoPrint-FileManager/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/kantlivelong/OctoPrint-PSUControl/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/malnvenshorn/OctoPrint-CostEstimation/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/google/OctoPrint-HeaterTimeout/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/marian42/octoprint-preheat/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/pablogventura/Octoprint-ETA/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-FirmwareUpdater/archive/master.zip"
 }
 
 function setup_mjpg_streamer() {
@@ -105,6 +107,26 @@ function setup_haproxy() {
   cp $CODE_BASE/files/etc_haproxy_haproxycfg /etc/haproxy/haproxy.cfg
   service haproxy restart
 }
+
+while test $# -gt 0
+do
+    case "$1" in
+        --debugging) DEBUGGING=true
+            ;;
+        --restart-everything) NUKE_THE_WORLD=true
+            ;;
+    esac
+    shift
+done
+
+if [ NUKE_THE_WORLD ]
+then
+  echo "NUKE_THE_WORLD"
+  sudo rm -rf $INSTALL_BASE/oprint
+  sudo rm -rf $INSTALL_BASE/mjpg_streamer
+  sudo rm -rf $INSTALL_BASE/OctoPrint
+  exit 0
+fi
 
 clear
 echo_green "Starting to install from $CODE_BASE to $INSTALL_BASE..."
