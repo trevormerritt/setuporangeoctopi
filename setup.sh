@@ -1,7 +1,10 @@
 #!/bin/bash
 
+INSTALL_BASE=/home/pi/
+CODEBASE=`pwd`
+
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
+   echo "This script must be run as root"
    exit 1
 fi
 
@@ -54,12 +57,13 @@ function setup_venv() {
 
 function setup_octoprint() {
   echo_green "Downloading Octoprint"
-  cd /home/pi
+  cd $INSTALL_BASE
   git clone https://github.com/foosel/OctoPrint.git OctoPrint &> /dev/null
   cd OctoPrint
   echo_green "--Building Octoprint"
   sudo -u pi /home/pi/oprint/bin/python setup.py install &> /dev/null
   echo_green "--Setting up Octoprint in Environment"
+  cd ..
   mv files/etc_initd_octoprint /etc/init.d/octoprint
   mv files/etc_default_octoprint /etc/default/octoprint
 
@@ -80,10 +84,9 @@ function setup_octoprint_plugins() {
   sudo -u pi /home/pi/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-FirmwareUpdater/archive/master.zip"
 }
 
-
 function setup_mjpg_streamer() {
   echo_green "Setting up mjpg_streamer"
-  cd /home/pi
+  cd $INSTALL_BASE
   git clone https://github.com/jacksonliam/mjpg-streamer.git mjpg-streamer > /dev/null
   cd mjpg-streamer
   echo_green "--Building binaries"
@@ -91,6 +94,7 @@ function setup_mjpg_streamer() {
   mkdir www-octopi
   echo_green "--Building webpages"
   rm /etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/certs/ssl-cert-snakeoil.pem
+  cd $CODE_BASE
   mv files/mjpg_www_index /home/pi/mjpg-streamer/www-octopi/index.html
   mv files/etc_default_webcamd /etc/init.d/webcamd
   update-rc.d webcamd defaults
@@ -98,7 +102,9 @@ function setup_mjpg_streamer() {
 
 function setup_haproxy() {
   echo_green "Building HAProxy configuration"
+  cd $INSTALL_BASE
   mv files/etc_haproxy_haproxycfg /etc/haproxy/haproxy.cfg
+  service haproxy restart
 }
 
 clear
