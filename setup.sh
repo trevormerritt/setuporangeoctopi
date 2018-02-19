@@ -1,11 +1,11 @@
 #!/bin/bash
 
 INSTALL_BASE=/home/pi/
-CODEBASE=`pwd`
+CODE_BASE=`pwd`
 
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
-   exit 1
+if [[ $UID -ne 0 ]]; then
+  sudo -p 'Restarting as root, password: ' bash $0 "$@"
+  exit $?
 fi
 
 function echo_green(){
@@ -64,8 +64,8 @@ function setup_octoprint() {
   sudo -u pi /home/pi/oprint/bin/python setup.py install &> /dev/null
   echo_green "--Setting up Octoprint in Environment"
   cd ..
-  mv files/etc_initd_octoprint /etc/init.d/octoprint
-  mv files/etc_default_octoprint /etc/default/octoprint
+  cp $CODE_BASE/files/etc_initd_octoprint /etc/init.d/octoprint
+  cp $CODE_BASE/files/etc_default_octoprint /etc/default/octoprint
 
   update-rc.d octoprint defaults 95
 }
@@ -94,16 +94,14 @@ function setup_mjpg_streamer() {
   mkdir www-octopi
   echo_green "--Building webpages"
   rm /etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/certs/ssl-cert-snakeoil.pem
-  cd $CODE_BASE
-  mv files/mjpg_www_index /home/pi/mjpg-streamer/www-octopi/index.html
-  mv files/etc_default_webcamd /etc/init.d/webcamd
+  cp $CODE_BASE/files/mjpg_www_index /home/pi/mjpg-streamer/www-octopi/index.html
+  cp $CODE_BASE/files/etc_default_webcamd /etc/init.d/webcamd
   update-rc.d webcamd defaults
 }
 
 function setup_haproxy() {
   echo_green "Building HAProxy configuration"
-  cd $INSTALL_BASE
-  mv files/etc_haproxy_haproxycfg /etc/haproxy/haproxy.cfg
+  cp $CODE_BASE/files/etc_haproxy_haproxycfg /etc/haproxy/haproxy.cfg
   service haproxy restart
 }
 
@@ -121,4 +119,3 @@ setup_octoprint_plugins
 setup_mjpg_streamer
 setup_haproxy
 cleanup
-
