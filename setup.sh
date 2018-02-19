@@ -111,7 +111,7 @@ function setup_mjpg_streamer() {
   sudo -u pi make > $OUTPUT_FILE
   mkdir www-octopi
   echo_green "--Building webpages"
-  if [ -e "/etc/ssl/private/ssl-cert-snakeoil.key"]
+  if [ -e "/etc/ssl/private/ssl-cert-snakeoil.key" ]
   then
     rm /etc/ssl/private/ssl-cert-snakeoil.key
   fi
@@ -123,8 +123,11 @@ function setup_mjpg_streamer() {
   cp $CODE_BASE/files/mjpg_www_index /home/pi/mjpg-streamer/www-octopi/index.html
   cp $CODE_BASE/files/etc_initd_webcamd /etc/init.d/webcamd
   cp $CODE_BASE/files/etc_default_webcamd /etc/default/webcamd
+  mkdir /root/bin
+  cp $CODE_BASE/files/root_bin_webcamd /root/bin/webcamd
   chmod +x /etc/init.d/webcamd
   update-rc.d webcamd defaults
+
 }
 
 function setup_haproxy() {
