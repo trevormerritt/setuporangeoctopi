@@ -46,13 +46,13 @@ function apt_steps() {
     libavahi-compat-libdnssd1 libffi-dev libssl-dev libjpeg62-turbo-dev \
     ssl-cert haproxy &> $OUTPUT_FILE
   apt-get install --reinstall iputils-ping &> $OUTPUT_FILE
-  apt-get -qq -y --force-yes --no-install-recommends install imagemagick \
+  apt-get -y --force-yes --no-install-recommends install imagemagick \
     libav-tools libv4l-dev &> $OUTPUT_FILE
 
   echo_green "--Updating Cache"
-  apt-get update -qq -y &> $OUTPUT_FILE
+  apt-get update -y &> $OUTPUT_FILE
   echo_green "--Updating Software"
-  apt-get -qq -y upgrade &> $OUTPUT_FILE
+  apt-get -y upgrade &> $OUTPUT_FILE
 }
 
 function cleanup() {
@@ -72,7 +72,7 @@ function setup_venv() {
 function setup_octoprint() {
   echo_green "Downloading Octoprint"
   cd $INSTALL_BASE
-  git clone https://github.com/foosel/OctoPrint.git OctoPrint &> $OUTPUT_FILE
+  sudo -u pi git clone https://github.com/foosel/OctoPrint.git OctoPrint &> $OUTPUT_FILE
   cd OctoPrint
   echo_green "--Building Octoprint"
   sudo -u pi $INSTALL_BASE/oprint/bin/python setup.py install &> $OUTPUT_FILE
@@ -101,7 +101,7 @@ function setup_octoprint_plugins() {
 function setup_mjpg_streamer() {
   echo_green "Setting up mjpg_streamer"
   cd $INSTALL_BASE
-  git clone https://github.com/jacksonliam/mjpg-streamer.git mjpg-streamer > $OUTPUT_FILE
+  sudo -u pi git clone https://github.com/jacksonliam/mjpg-streamer.git mjpg-streamer > $OUTPUT_FILE
   cd mjpg-streamer
   echo_green "--Building binaries"
   sudo -u pi make > $OUTPUT_FILE
@@ -148,9 +148,12 @@ fi
 
 if [ -n "$NUKE_THE_WORLD" ]
 then
-  echo "Nuking everything..."
+  echo "Nuking folders in $INSTALL_BASE..."
+  echo "...oprint"
   sudo rm -rf $INSTALL_BASE/oprint
-  sudo rm -rf $INSTALL_BASE/mjpg_streamer
+  echo "...mjpg-streamer"
+  sudo rm -rf $INSTALL_BASE/mjpg-streamer
+  echo "...octoprint"
   sudo rm -rf $INSTALL_BASE/OctoPrint
   exit 0
 fi
@@ -174,4 +177,3 @@ setup_octoprint_plugins
 setup_mjpg_streamer
 setup_haproxy
 cleanup
-
