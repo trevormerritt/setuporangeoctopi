@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 INSTALL_BASE=/home/pi/
 CODE_BASE=`pwd`
 VIRTUALENV='/usr/bin/python /usr/lib/python2.7/dist-packages/virtualenv.py'
@@ -18,6 +16,7 @@ function usage() {
   echo "$0"
   echo " --help (This)"
   echo " --restart-everything (Nuke Everything)"
+  echo " --debugging (Turn on more debugging stuff)"
   exit 0
 }
 
@@ -157,6 +156,7 @@ fi
 
 if [ -n "$DEBUGGING" ]
 then
+  set -x
   OUTPUT_FILE=/dev/null
 fi
 
