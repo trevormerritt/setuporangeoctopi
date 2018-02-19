@@ -71,7 +71,8 @@ function setup_venv() {
 function setup_octoprint() {
   echo_green "Downloading Octoprint"
   cd $INSTALL_BASE
-  sudo -u pi git clone https://github.com/foosel/OctoPrint.git OctoPrint &> $OUTPUT_FILE
+  git clone https://github.com/foosel/OctoPrint.git OctoPrint &> $OUTPUT_FILE
+  chown -R pi:pi OctoPrint
   cd OctoPrint
   echo_green "--Building Octoprint"
   sudo -u pi $INSTALL_BASE/oprint/bin/python setup.py install &> $OUTPUT_FILE
@@ -100,7 +101,8 @@ function setup_octoprint_plugins() {
 function setup_mjpg_streamer() {
   echo_green "Setting up mjpg_streamer"
   cd $INSTALL_BASE
-  sudo -u pi git clone https://github.com/jacksonliam/mjpg-streamer.git mjpg-streamer > $OUTPUT_FILE
+  git clone https://github.com/jacksonliam/mjpg-streamer.git mjpg-streamer > $OUTPUT_FILE
+  chown -R pi:po mjpg-streamer
   cd mjpg-streamer
   echo_green "--Building binaries"
   sudo -u pi make > $OUTPUT_FILE
