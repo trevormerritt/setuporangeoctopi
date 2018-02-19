@@ -66,7 +66,7 @@ function setup_octoprint() {
   cd ..
   cp $CODE_BASE/files/etc_initd_octoprint /etc/init.d/octoprint
   cp $CODE_BASE/files/etc_default_octoprint /etc/default/octoprint
-
+  chmod +x /etc/init.d/octoprint
   update-rc.d octoprint defaults 95
 }
 
@@ -96,6 +96,7 @@ function setup_mjpg_streamer() {
   rm /etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/certs/ssl-cert-snakeoil.pem
   cp $CODE_BASE/files/mjpg_www_index /home/pi/mjpg-streamer/www-octopi/index.html
   cp $CODE_BASE/files/etc_default_webcamd /etc/init.d/webcamd
+  chmod +x /etc/init.d/webcamd
   update-rc.d webcamd defaults
 }
 
@@ -106,7 +107,7 @@ function setup_haproxy() {
 }
 
 clear
-echo_green "Starting to install..."
+echo_green "Starting to install from $CODE_BASE to $INSTALL_BASE..."
 apt_steps
 echo_green "...Install of packages complete"
 echo_green "Fixing SSH"
