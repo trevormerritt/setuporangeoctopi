@@ -88,17 +88,17 @@ function setup_octoprint() {
 }
 
 function setup_octoprint_plugins() {
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-Autoselect/archive/master.zip"
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-DisplayProgress/archive/master.zip"
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/jasiek/OctoPrint-Cost/archive/master.zip"
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/dattas/OctoPrint-DetailedProgress/archive/master.zip"
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/Salandora/OctoPrint-FileManager/archive/master.zip"
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/kantlivelong/OctoPrint-PSUControl/archive/master.zip"
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/malnvenshorn/OctoPrint-CostEstimation/archive/master.zip"
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/google/OctoPrint-HeaterTimeout/archive/master.zip"
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/marian42/octoprint-preheat/archive/master.zip"
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/pablogventura/Octoprint-ETA/archive/master.zip"
-  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-FirmwareUpdater/archive/master.zip"
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-Autoselect/archive/master.zip" > $OUTPUT_FILE
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-DisplayProgress/archive/master.zip" > $OUTPUT_FILE
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/jasiek/OctoPrint-Cost/archive/master.zip" > $OUTPUT_FILE
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/dattas/OctoPrint-DetailedProgress/archive/master.zip" > $OUTPUT_FILE
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/Salandora/OctoPrint-FileManager/archive/master.zip" > $OUTPUT_FILE
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/kantlivelong/OctoPrint-PSUControl/archive/master.zip" > $OUTPUT_FILE
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/malnvenshorn/OctoPrint-CostEstimation/archive/master.zip" > $OUTPUT_FILE
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/google/OctoPrint-HeaterTimeout/archive/master.zip" > $OUTPUT_FILE
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/marian42/octoprint-preheat/archive/master.zip" > $OUTPUT_FILE
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/pablogventura/Octoprint-ETA/archive/master.zip" > $OUTPUT_FILE
+  sudo -u pi $INSTALL_BASE/oprint/bin/pip install "https://github.com/OctoPrint/OctoPrint-FirmwareUpdater/archive/master.zip" > $OUTPUT_FILE
 }
 
 function setup_mjpg_streamer() {
