@@ -1,11 +1,12 @@
 ** USAGE **
 
-Install Armbian.
-On first boot, change root password, then add a user named 'pi'
-After the user is created, connect to the internet and clone the repo 'somewhere'.  I use /home/pi resulting in /home/pi/setuporangeoctopi
-Run /home/pi/setuporangeoctopi/setup.sh --install.sh
-This takes ~45 mins.  Wait.
-After reboot, you have:
+- Install Armbian.
+- On first boot, change root password, then add a user named 'pi'
+- After the user is created, connect to the internet and clone the repo 'somewhere'.  I use /home/pi resulting in /home/pi/setuporangeoctopi
+- Run /home/pi/setuporangeoctopi/setup.sh --install.sh
+-This takes ~45 mins.  Wait.
+
+- After reboot, you have:
   - Octoprint
   - ffmpeg-streamer
   - haproxy
