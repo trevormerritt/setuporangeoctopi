@@ -48,7 +48,7 @@ function apt_steps() {
   apt-get -y --force-yes install python2.7 python-virtualenv python-dev \
     git screen subversion cmake checkinstall avahi-daemon \
     libavahi-compat-libdnssd1 libffi-dev libssl-dev libjpeg62-turbo-dev \
-    ssl-cert haproxy &> $OUTPUT_FILE
+    ssl-cert haproxy cmake &> $OUTPUT_FILE
   apt-get install --reinstall iputils-ping &> $OUTPUT_FILE
   apt-get -y --force-yes --no-install-recommends install imagemagick \
     libav-tools libv4l-dev &> $OUTPUT_FILE
