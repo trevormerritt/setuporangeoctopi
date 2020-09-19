@@ -195,19 +195,19 @@ fi
 if [ -n "$DO_INSTALL" ]
 then
 
-#  clear
-#  echo_green "Starting to install from $CODE_BASE to $INSTALL_BASE..."
-#  apt_steps
-#  echo_green "...Install of packages complete"
-#  echo_green "Fixing SSH"
-#  echo "IPQoS 0x00" >> /etc/ssh/sshd_config
+  clear
+  echo_green "Starting to install from $CODE_BASE to $INSTALL_BASE..."
+  apt_steps
+  echo_green "...Install of packages complete"
+  echo_green "Fixing SSH"
+  echo "IPQoS 0x00" >> /etc/ssh/sshd_config
 
-#  setup_user_pi
-#  setup_venv
-setup_octoprint
-setup_octoprint_plugins
-#  setup_mjpg_streamer
-#  setup_haproxy
+  setup_user_pi
+  setup_venv
+  setup_octoprint
+  setup_octoprint_plugins
+  setup_mjpg_streamer
+  setup_haproxy
 #  cleanup
   # shutdown now -r
 else
